@@ -1,6 +1,12 @@
-% 
+% Copyright (c) Nuno Alves de Sousa
+%
+% Use, modification and distribution is subject to the Boost Software License,
+% Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+% http://www.boost.org/LICENSE_1_0.txt)
+%
 % Creates a semilog plot for dgemm benchmarks
-% GFLOPS are computed 
+% GFLOPS are computed using exact formula because the initial matrix
+% dimmensions are small
 
 % Load the benchmark file
 [file, path] = uigetfile('.csv', 'Import benchmark');
@@ -46,7 +52,7 @@ answer = inputdlg(prompt, dlgTitle, dims, defInput);
 answer = cellfun(@str2num, answer);
 peakGflops = prod(answer)
 
-% FLOP MN(1+2K) ~ 2MNK for K >> 1 (no approx. because for K = 2, K ~ 1)
+% FLOP MN(1+2K) ~ 2MNK for K >> 1
 gflops = ((data.ProblemSpace.^2) .* (1+2*data.ProblemSpace)) * (1E-9);  
 gflops = gflops ./ (data.us_Iteration * 1E-6); % t in us
 
