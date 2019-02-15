@@ -12,13 +12,13 @@
 [file, path] = uigetfile('.csv', 'Import benchmark');
 filename = [path file];
 if(not(filename))
-    errordlg('No file was selected.');
+    errordlg('No file was selected.', 'Error');
     return
 end
 data = readtable(filename);
 
 % If commas are used as decimal separator, replace with dot
-question = ['Does the file ' file ' use comma as decimal separator'];
+question = ['Does the file ' file ' use comma as decimal separator?'];
 dlgTitle = 'Decimal separator';
 hasCommaDecimalSeparator = questdlg(question, dlgTitle, 'Yes', 'No', 'Yes');
 
@@ -42,15 +42,15 @@ for i=1:nExperiments
 end
 
 % Compute GFLOPS
-prompt = {'Number of cores:', ...
-    'CPU frequency (GHz)', ...
+prompt = {'Number of cores:',...
+    'CPU frequency (GHz)',...
     'Floating point operations per cicle'};
 dlgTitle = 'Compute peak GFLOPS';
-dims = [1, 25];
+dims = [1, 50];
 defInput = {'4', '3.50', '16'};
 answer = inputdlg(prompt, dlgTitle, dims, defInput);
 answer = cellfun(@str2num, answer);
-peakGflops = prod(answer)
+peakGflops = prod(answer);
 
 % FLOP MN(1+2K) ~ 2MNK for K >> 1
 gflops = ((data.ProblemSpace.^2) .* (1+2*data.ProblemSpace)) * (1E-9);  
@@ -61,8 +61,10 @@ for i=1:nExperiments
     semilogx(data.ProblemSpace(range), gflops(range));
     hold on
 end
-title('C = \alpha \times A^T \times B^T + \beta C');
+title(['C = \alpha \times A^T \times B^T + \beta C \rm (Peak GFLOPS = '... 
+    num2str(peakGflops) ')']);
 xlabel('Matrix dim (n x n)');
 ylabel('GFLOPS');
 legend(experiments);
+grid on
 hold off
