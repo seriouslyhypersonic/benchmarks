@@ -1,3 +1,7 @@
+% 
+% Creates a semilog plot for dgemm benchmarks
+% GFLOPS are computed 
+
 % Load the benchmark file
 [file, path] = uigetfile('.csv', 'Import benchmark');
 filename = [path file];
@@ -42,7 +46,8 @@ answer = inputdlg(prompt, dlgTitle, dims, defInput);
 answer = cellfun(@str2num, answer);
 peakGflops = prod(answer)
 
-gflops = (2 * data.ProblemSpace.^3) * (1E-9);  % FLOP ~ 2MNK
+% FLOP MN(1+2K) ~ 2MNK for K >> 1 (no approx. because for K = 2, K ~ 1)
+gflops = ((data.ProblemSpace.^2) .* (1+2*data.ProblemSpace)) * (1E-9);  
 gflops = gflops ./ (data.us_Iteration * 1E-6); % t in us
 
 for i=1:nExperiments
